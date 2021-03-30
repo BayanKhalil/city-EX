@@ -6,15 +6,54 @@ const PORT =process.env.PORT || 5000;
 const express = require('express'); 
 const cors = require('cors');
 const superagent = require('superagent');
+const pg = require('pg');
 
 const app = express(); 
 app.use(cors());
+
+
 app.get('/location', handleLocation);
 app.get('/weather', handleWeather);
 
 
 let key=process.env.GEOCODE_API_KEY
 let key2= process.env.WEACODE_API_KEY
+
+
+
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('error', err => console.log("PG PROBLEM!!!") );
+
+
+app.get('/location', (request, response)=> {
+    let SQL = 'SELECT * FROM student';
+    client.query(SQL).then(result=> {
+        console.log(result.rows);
+        response.send(result.rows);
+    });
+});
+
+app.get('/add', (request, response)=> {
+     let city = request.query.city;
+    let name = request.query.display_name;
+    let latitude = request.query.lat;
+    let longitude = request.query.lon;
+
+    let SQL = 'INSERT INTO student (name, course) VALUES($1, $2) RETURNING *';
+    let values = [city, name,latitude,longitude];
+
+    
+    client.query(SQL, values).then(result=> {
+        console.log(result.rows);
+        response.send(result.rows);
+    });
+});
+
+
+
+
+
+
 function handleLocation(request, response) {
 
     // const getLocation = require('./data/location.json');
@@ -22,7 +61,7 @@ function handleLocation(request, response) {
     const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json&limit=1`;
     superagent.get(url).then(res=> {
         const data = res.body[0];
-        const locationData = new Location(city, data);new Location(request.query.city, data.display_name, data.lat, data.lon);
+        const locationData = new Location(request.query.city, data.display_name, data.lat, data.lon);
         response.status(200).json(locationData);
     })
 //  console.log(locationData)
