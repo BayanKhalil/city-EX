@@ -14,17 +14,40 @@ app.get('/weather', handleWeather);
 app.get('/parks', handlePark);
 
 
-// app.use('*', notFoundHandler); // 404 not found url
- 
-// app.use(errorHandler);
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('error', err => console.log("PG PROBLEM!!!") );
 
-// function notFoundHandler(request, response) {
-//   response.status(404).send('requested API is Not Found!');
-// }
+app.get('/location', (request, response)=> {
+    let SQL = 'SELECT * FROM location';
+    client.query(SQL).then(result=> {
+        console.log(result.rows);
+        response.send(result.rows);
+    });
+});
 
-// function errorHandler(err, request, response, next) {
-//   response.status(500).send('something is wrong in server');
-// }
+app.get('/add', (request, response)=> {
+    let city = request.query.city;
+    let name = data.display_name;
+    let latitude =data.lat
+    let longitude =data.lon
+    // Binding: Safe paramters Secured way (NO SQL INJECTION WILL HAPPEN)
+    let SQL = 'INSERT INTO student (name, course) VALUES($1, $2) RETURNING *';
+    let values = [city, name,latitude,longitude];
+
+    // let SQL2 = `INSERT INTO student (name, course) VALUES(${name}, ${values})`;
+    
+    client.query(SQL, values).then(result=> {
+        console.log(result.rows);
+        response.send(result.rows);
+    });
+});
+
+app.use(cors());
+
+client.connect().then(()=> {
+    console.log("connected");
+    app.listen(PORT, ()=> console.log(`App is running on ${PORT}`));
+});
 
 
 let key=process.env.GEOCODE_API_KEY
