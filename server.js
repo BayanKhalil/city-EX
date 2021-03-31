@@ -58,7 +58,7 @@ function handleLocation(request, response) {
             const locationData = new Location(cityName, data.display_name, data.lat, data.lon);
             return locationData;
             // response.status(200).json(locationData);
-        })
+        }).catch(()=>"not ok")
 
 
     }
@@ -86,7 +86,7 @@ function handleLocation(request, response) {
             // console.log(newArr);
             response.send(newArr);
             response.status(200).json(locationData);
-        })
+        }).catch(()=>response.send("not ok"))
 
     }
 
@@ -100,18 +100,18 @@ function handleLocation(request, response) {
         console.log(request.query);
         // this give us info from th browser who send the request
         // response.send(request.query);
-        const url = `https://developer.nps.gov/api/v1/parks?${city.formatted_query}&api_key=${key3}`
+        const url = `https://developer.nps.gov/api/v1/parks?${city.search_query}&api_key=${key3}`
         superagent.get(url).then(res=> {
          // this give us info from th API that will give me weather condition
-            // console.log(res);
+            console.log(res);
             const apiResPark = res.body.data.map(parkObj=>{
                 const parkData=new Park(parkObj.fullName,parkObj.addresses[0],parkObj.entranceFees[0],parkObj.description,parkObj.url)
                 return parkData;
             });
             response.send(apiResPark);
-            response.status(200).json(locationData);
+            // response.status(200).json(locationData);
 
-        })
+        }).catch(()=>response.send("not ok"))
 
     }
 
