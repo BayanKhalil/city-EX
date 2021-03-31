@@ -84,8 +84,8 @@ function handleLocation(request, response) {
             let newArr=[]
             newArr.push(locationData)
             // console.log(newArr);
-            response.send(newArr);
-            response.status(200).json(locationData);
+            // response.send(newArr);
+            response.status(200).json(newArr);
         }).catch(()=>response.send("not ok"))
 
     }
@@ -108,7 +108,7 @@ function handleLocation(request, response) {
                 const parkData=new Park(parkObj.fullName,parkObj.addresses[0],parkObj.entranceFees[0],parkObj.description,parkObj.url)
                 return parkData;
             });
-            response.send(apiResPark);
+            response.status(200).json(parkData);
             // response.status(200).json(locationData);
 
         }).catch(()=>response.send("not ok"))
