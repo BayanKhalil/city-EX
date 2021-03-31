@@ -58,7 +58,7 @@ function handleLocation(request, response) {
             const locationData = new Location(cityName, data.display_name, data.lat, data.lon);
             return locationData;
             // response.status(200).json(locationData);
-        }).catch(()=>"not ok")
+        })
 
 
     }
