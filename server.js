@@ -14,6 +14,7 @@ app.get('/weather', handleWeather);
 app.get('/parks', handlePark);
 
 
+
 // app.use('*', notFoundHandler); // 404 not found url
  
 // app.use(errorHandler);
@@ -30,21 +31,37 @@ app.get('/parks', handlePark);
 let key=process.env.GEOCODE_API_KEY
 let key2= process.env.WEACODE_API_KEY
 let key3= process.env.PARKCODE_API_KEY
+
 function handleLocation(request, response) {
 // const getLocation = require('./data/location.json');
         //  to read the city valu
     const city = request.query.city; 
-    const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json&limit=1`;
-    superagent.get(url).then(res=> {
-        const data = res.body[0];
-        const locationData = new Location(request.query.city, data.display_name, data.lat, data.lon);
-        response.status(200).json(locationData);
+    getLocation(city).then(res=>{
+        response.status(200).json(res)
     })
+
+
+
+    
+    
 //  console.log(locationData)
     //    response.send()
     
 
     };
+    function getLocation(cityName){
+        const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${cityName}&format=json&limit=1`;
+        
+        return superagent.get(url).then(res=> {
+            const data = res.body[0];
+            // console.log(res);
+            const locationData = new Location(cityName, data.display_name, data.lat, data.lon);
+            return locationData;
+            // response.status(200).json(locationData);
+        })
+
+
+    }
 
     function handleWeather (request,response){
         const city = request.query; 
