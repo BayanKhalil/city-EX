@@ -1,3 +1,6 @@
+DROP TABLE location_data;
+DROP TABLE parks_data;
+
 CREATE TABLE location_data (
     search_query varchar(100),
     formatted_query varchar(500),
